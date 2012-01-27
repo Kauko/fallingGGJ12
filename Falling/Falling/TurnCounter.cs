@@ -5,8 +5,7 @@ using System.Text;
 
 namespace Falling
 {
-    abstract class Asset
+    class TurnCounter
     {
-
     }
 }

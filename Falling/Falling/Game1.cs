@@ -11,6 +11,9 @@ using Microsoft.Xna.Framework.Media;
 
 namespace Falling
 {
+
+    enum GameState { title, playing, gameover }
+
     /// <summary>
     /// This is the main type for your game
     /// </summary>
@@ -18,6 +21,10 @@ namespace Falling
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+
+        GameState state;
+        MouseState oldMouse;
+        Grid grid;
 
         public Game1()
         {
@@ -36,6 +43,11 @@ namespace Falling
             // TODO: Add your initialization logic here
 
             base.Initialize();
+            int gridSize = C.screenWidth - C.xMarginLeft - C.xMarginRight;
+            grid = new Grid(C.xMarginLeft, C.yMargin, gridSize / C.gridCols);
+
+            this.IsMouseVisible = true;
+            state = GameState.title;
         }
 
         /// <summary>
@@ -70,8 +82,21 @@ namespace Falling
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
+            MouseState mouse = Mouse.GetState();
 
+
+            switch (state)
+            {
+                case GameState.title:
+                    break;
+
+                case GameState.playing:
+                    PlayingGame(gameTime);
+                    break;
+
+                case GameState.gameover:
+                    break;
+            }
             base.Update(gameTime);
         }
 
@@ -83,9 +108,37 @@ namespace Falling
         {
             GraphicsDevice.Clear(Color.CornflowerBlue);
 
-            // TODO: Add your drawing code here
+            spriteBatch.Begin();
+
+            switch (state)
+            {
+                case GameState.title:
+                    spriteBatch.Draw(TextureRefs.title, new Vector2(0.0f, 0.0f), Color.White);
+                    break;
+
+                case GameState.playing:
+                    spriteBatch.Draw(TextureRefs.background, new Vector2(0.0f, 0.0f), Color.White);
+
+                    grid.Draw(spriteBatch);
+
+
+                    break;
+
+                case GameState.gameover:
+                    spriteBatch.Draw(TextureRefs.highscore, new Vector2(0.0f, 0.0f), Color.White);
+                    break;
+            }
 
             base.Draw(gameTime);
         }
+
+        protected void PlayingGame(GameTime gametime, MouseState mouse)
+        {
+            if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
+            {
+                grid.mouseClicked(mouse.X, mouse.Y);
+            }
+        }
+
     }
 }
