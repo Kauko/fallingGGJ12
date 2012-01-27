@@ -7,5 +7,6 @@ namespace Falling
 {
     abstract class Asset
     {
+
     }
 }
