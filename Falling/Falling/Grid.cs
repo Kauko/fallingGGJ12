@@ -14,7 +14,7 @@ namespace Falling
 
         Tile[,] tiles;
         Player currentPlayer;
-        Player[,] otherPlayers;
+        Player[,] deadPlayers;
 
         public Grid(int gridX, int gridY, int gridSize)
         {
@@ -23,14 +23,32 @@ namespace Falling
             tileSize = gridSize;
         }
 
-        public void mouseClicked(int x, int y)
+        public bool mouseClicked(int x, int y)
         {
-            if (tileAdjacentToPlayer(x, y)) 
+            if (tileAdjacentToPlayer(x, y))
             {
                 currentPlayer.setPosition(x, y);
+                foreach(Tile in tiles)
+                {
+                    
+                }
+
+                return true;
             }
+            else
+                return false;
 
 
+        }
+
+        public void setCurrentPlayer(Player player)
+        {
+            currentPlayer = player;
+        }
+
+        public void addDeadPlayer(Player p)
+        {
+            deadPlayers[p.getX(), p.getY()] = p; 
         }
 
         public void Draw(SpriteBatch spriteBatch)
@@ -38,13 +56,13 @@ namespace Falling
             
         }
 
-        public bool tileAdjacentToPlayer(int x, int y)
+        public bool tileAdjacentToPlayer(int col, int row)
         {
-            int px = currentPlayer.getX();
-            int py = currentPlayer.getY();
-            if (y == py && px == x - 1 || px == x + 1)
+            int pcol = currentPlayer.getCol();
+            int prow = currentPlayer.getRow();
+            if (col == pcol && prow == row - 1 || prow == row + 1)
                 return true;
-            else if (x == px && py == y - 1 || py == y + 1)
+            else if (row == prow && pcol == col - 1 || pcol == y + 1)
                 return true;
             else
                 return false;

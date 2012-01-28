@@ -26,6 +26,8 @@ namespace Falling
         MouseState oldMouse;
         Grid grid;
 
+        Player currentPlayer;
+
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
@@ -91,7 +93,7 @@ namespace Falling
                     break;
 
                 case GameState.playing:
-                    PlayingGame(gameTime);
+                    PlayingGame(gameTime, mouse);
                     break;
 
                 case GameState.gameover:
@@ -136,7 +138,15 @@ namespace Falling
         {
             if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
             {
-                grid.mouseClicked(mouse.X, mouse.Y);
+                if (grid.mouseClicked(mouse.X, mouse.Y))
+                {
+                    currentPlayer.decrementTurnsLeft();
+                    if (currentPlayer.getTurnsLeft() <= 0)
+                    {
+                        grid.addDeadPlayer(currentPlayer);
+                        currentPlayer = new Player();
+                    }
+                }
             }
         }
 
