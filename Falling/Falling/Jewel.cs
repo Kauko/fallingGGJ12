@@ -44,7 +44,7 @@ namespace Falling
         public void setCol(int c) 
         {
             this.col = c;
-            FrameImage.fadeOut();
+            frameImage.fadeOut();
         }
 
         public void setCollected(bool c) 

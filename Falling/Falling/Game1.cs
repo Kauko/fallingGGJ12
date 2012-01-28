@@ -72,6 +72,8 @@ namespace Falling
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
+            LevelLibrary.Level level = Content.Load<LevelLibrary.Level>("level1");
+
             TextureRefs.tileLevel0 = this.Content.Load<Texture2D>("1");
             TextureRefs.tileLevel1 = this.Content.Load<Texture2D>("2");
             TextureRefs.tileLevel2 = this.Content.Load<Texture2D>("3");
@@ -138,10 +140,10 @@ namespace Falling
                     break;
 
                 case GameState.playing:
-                    spriteBatch.Draw(TextureRefs.background, new Vector2(0.0f, 0.0f), Color.White);
+                    //spriteBatch.Draw(TextureRefs.background, new Vector2(0.0f, 0.0f), Color.White);
 
                     grid.Draw(spriteBatch);
-                    spriteBatch.Draw(TextureRefs.frameBackground, new Vector2(0.0f, 0.0f), Color.White);
+                    //spriteBatch.Draw(TextureRefs.frameBackground, new Vector2(0.0f, 0.0f), Color.White);
                     frameImageManager.Draw(spriteBatch);
 
 

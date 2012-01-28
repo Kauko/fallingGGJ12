@@ -11,9 +11,9 @@ namespace Falling
     {
         List<FrameImage> frameImages;
 
-        public void addFrameImage(Texture2D texture, Vector2 pos) 
+        public void addFrameImage(Texture2D clean,Texture2D fade, Vector2 pos) 
         { 
-            frameImages.Add(new FrameImage(texture, pos));
+            frameImages.Add(new FrameImage(clean,fade, pos));
         }
 
         public void Draw(SpriteBatch spriteBatch) 
