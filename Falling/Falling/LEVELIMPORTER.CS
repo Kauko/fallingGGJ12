@@ -9,7 +9,7 @@ using Microsoft.Xna.Framework.Content.Pipeline.Graphics;
 // TODO: replace this with the type you want to import.
 using TImport = System.String;
 
-namespace RuttoPuputLevelLoader
+namespace Falling
 {
     /// <summary>
     /// This class will be instantiated by the XNA Framework Content Pipeline
@@ -20,7 +20,7 @@ namespace RuttoPuputLevelLoader
     /// TODO: change the ContentImporter attribute to specify the correct file
     /// extension, display name, and default processor for this importer.
     /// </summary>
-    [ContentImporter(".rpl", DisplayName = "RuttoPuput Level Importer", DefaultProcessor = "LevelPorcessor")]
+    [ContentImporter(".txt", DisplayName = "Falling Level Importer", DefaultProcessor = "LevelProcessor")]
     public class LevelImporter : ContentImporter<TImport>
     {
         public override TImport Import(string filename, ContentImporterContext context)

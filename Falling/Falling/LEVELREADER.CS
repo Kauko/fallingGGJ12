@@ -6,9 +6,9 @@ using Microsoft.Xna.Framework.Content;
 using Microsoft.Xna.Framework.Graphics;
 
 // TODO: replace this with the type you want to read.
-using TRead = RuttoPuputLevel.Level;
+using TRead = Falling.Level;
 
-namespace RuttoPuputLevel
+namespace Falling
 {
     /// <summary>
     /// This class will be instantiated by the XNA Framework Content
@@ -22,8 +22,7 @@ namespace RuttoPuputLevel
     {
         protected override TRead Read(ContentReader input, TRead existingInstance)
         {
-            int target = input.ReadInt32();
-            int cycle = input.ReadInt32();
+
             int rows = input.ReadInt32();
             int cols = input.ReadInt32();
 
@@ -37,7 +36,7 @@ namespace RuttoPuputLevel
                 }
             }
 
-            return new Level(levelData, target, cycle);
+            return new Level(levelData);
         }
     }
 }

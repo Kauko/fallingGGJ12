@@ -9,9 +9,9 @@ using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 
 // TODO: replace these with the processor input and output types.
 using TInput = System.String;
-using TOutput = RuttoPuputLevel.Level;
+using TOutput = Falling.Level;
 
-namespace RuttoPuputLevelLoader
+namespace Falling
 {
     /// <summary>
     /// This class will be instantiated by the XNA Framework Content Pipeline
@@ -30,8 +30,6 @@ namespace RuttoPuputLevelLoader
         public override TOutput Process(TInput input, ContentProcessorContext context)
         {
             string[] lines = input.Split(new char[] {'\n'});
-            int target = Convert.ToInt32(lines[0]);
-            int cycle = Convert.ToInt32(lines[1]);
             int rows = Convert.ToInt32(lines[2]);
             int cols = Convert.ToInt32(lines[3]);
 
@@ -46,7 +44,7 @@ namespace RuttoPuputLevelLoader
                 }
             }
 
-            return new RuttoPuputLevel.Level(levelData, target, cycle);
+            return new Falling.Level(levelData);
             
         }
     }

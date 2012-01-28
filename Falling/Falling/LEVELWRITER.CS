@@ -9,9 +9,9 @@ using Microsoft.Xna.Framework.Content.Pipeline.Processors;
 using Microsoft.Xna.Framework.Content.Pipeline.Serialization.Compiler;
 
 // TODO: replace this with the type you want to write out.
-using TWrite = RuttoPuputLevel.Level;
+using TWrite = Falling.Level;
 
-namespace RuttoPuputLevelLoader
+namespace Falling
 {
     /// <summary>
     /// This class will be instantiated by the XNA Framework Content Pipeline
@@ -24,8 +24,7 @@ namespace RuttoPuputLevelLoader
     {
         protected override void Write(ContentWriter output, TWrite value)
         {
-            output.Write(value.GetTarget());
-            output.Write(value.GetCycle());
+
             output.Write(value.GetRows());
             output.Write(value.GetCols());
             for (int r = 0; r < value.GetRows(); r++)
@@ -41,7 +40,7 @@ namespace RuttoPuputLevelLoader
         {
             // TODO: change this to the name of your ContentTypeReader
             // class which will be used to load this data.
-            return "RuttoPuputLevel.LevelReader, RuttoPuputLevel";
+            return "Falling.LevelReader, Falling";
         }
     }
 }

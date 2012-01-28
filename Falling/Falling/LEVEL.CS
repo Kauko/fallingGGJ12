@@ -3,34 +3,20 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace RuttoPuputLevel
+namespace Falling
 {
     public class Level
     {
         public string[,] tiles;
-        private int target;
-        private int cycle;
 
-        public Level(string[,] levelData, int levelTarget, int levelCycle)
+        public Level(string[,] levelData)
         {
             tiles = levelData;
-            target = levelTarget;
-            cycle = levelCycle;
         }
 
         public string GetTileContent(int row, int col)
         {
             return tiles[row, col];
-        }
-
-        public int GetTarget()
-        {
-            return target;
-        }
-
-        public int GetCycle()
-        {
-            return cycle;
         }
 
         public int GetRows()
