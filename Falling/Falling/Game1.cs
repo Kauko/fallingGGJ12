@@ -21,11 +21,13 @@ namespace Falling
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
+        FrameImageManager frameImageManager;
 
         GameState state;
         MouseState oldMouse;
         Grid grid;
         Camera2D camera;
+        Vector2 cameraDirection = Vector2.Zero;
 
         Player currentPlayer;
 
@@ -33,6 +35,10 @@ namespace Falling
         {
             graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            graphics.PreferredBackBufferWidth = 1280;  // set this value to the desired width of your window
+            graphics.PreferredBackBufferHeight = 720;   // set this value to the desired height of your window
+            graphics.ApplyChanges();
+            this.Window.Title = "Falling World - GGJ12 - Finland - Oulu - Stage gamedev";
         }
 
         /// <summary>
@@ -47,8 +53,9 @@ namespace Falling
 
             base.Initialize();
 
-            Camera2D camera = new Camera2D(spriteBatch);
+            camera = new Camera2D(spriteBatch);
             grid = new Grid(C.xMarginLeft, C.yMargin, C.tileWidth, C.tileHeight, camera);
+            frameImageManager = new FrameImageManager();
 
             this.IsMouseVisible = true;
             state = GameState.playing;
@@ -91,7 +98,7 @@ namespace Falling
         protected override void Update(GameTime gameTime)
         {
             // Allows the game to exit
-            if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
+            if (Keyboard.GetState().IsKeyDown(Keys.Escape))
                 this.Exit();
 
             MouseState mouse = Mouse.GetState();
@@ -131,9 +138,11 @@ namespace Falling
                     break;
 
                 case GameState.playing:
-                    //spriteBatch.Draw(TextureRefs.background, new Vector2(0.0f, 0.0f), Color.White);
+                    spriteBatch.Draw(TextureRefs.background, new Vector2(0.0f, 0.0f), Color.White);
 
                     grid.Draw(spriteBatch);
+                    spriteBatch.Draw(TextureRefs.frameBackground, new Vector2(0.0f, 0.0f), Color.White);
+                    frameImageManager.Draw(spriteBatch);
 
 
                     break;
@@ -148,6 +157,28 @@ namespace Falling
 
         protected void PlayingGame(GameTime gametime, MouseState mouse, KeyboardState keyboard)
         {
+            cameraDirection = Vector2.Zero;
+
+            if (keyboard.IsKeyDown(Keys.Left) == true)
+            {
+                cameraDirection.X = -1;
+            }
+            else if (keyboard.IsKeyDown(Keys.Right) == true)
+            {
+                cameraDirection.X = 1;
+            }
+
+            if (keyboard.IsKeyDown(Keys.Up) == true)
+            {
+                cameraDirection.Y = -1;
+            }
+            else if (keyboard.IsKeyDown(Keys.Down) == true)
+            {
+                cameraDirection.Y = 1;
+            }
+
+            camera.Translate(cameraDirection, gametime);
+
             if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
             {
                 //if is a valid tile

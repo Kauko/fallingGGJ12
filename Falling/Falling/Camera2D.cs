@@ -17,6 +17,9 @@ namespace Falling
         private SpriteBatch spriteRenderer;
         private Vector2 cameraPosition;
 
+
+        public Vector2 cameraSpeedVector = new Vector2(3, 3);
+
         public Vector2 Position
         {
             get { return cameraPosition; }
@@ -51,9 +54,9 @@ namespace Falling
             return finalPosition;
         }
 
-        public void Translate(Vector2 moveVector)
+        public void Translate(Vector2 moveVector, GameTime theGameTime)
         {
-            cameraPosition += moveVector;
+            cameraPosition += moveVector * cameraSpeedVector * (float)theGameTime.ElapsedGameTime.TotalSeconds;;
         }
 
     }
