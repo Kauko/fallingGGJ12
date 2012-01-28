@@ -18,7 +18,7 @@ namespace Falling
         private Vector2 cameraPosition;
 
 
-        public Vector2 cameraSpeedVector = new Vector2(3, 3);
+        public Vector2 cameraSpeedVector = new Vector2(250, 250);
 
         public Vector2 Position
         {
@@ -44,7 +44,7 @@ namespace Falling
             player.Draw(spriteRenderer, drawPosition);
         }
 
-        private Vector2 ApplyTransformations(Vector2 nodePosition)
+        public Vector2 ApplyTransformations(Vector2 nodePosition)
         {
             // apply translation
             Vector2 finalPosition = nodePosition - cameraPosition;
@@ -52,6 +52,12 @@ namespace Falling
             //.....
             //--------------------------------------------
             return finalPosition;
+        }
+
+        public Vector2 TransformMouse(Vector2 mousePosition) 
+        {
+            Vector2 ret = mousePosition + cameraPosition;
+            return ret;
         }
 
         public void Translate(Vector2 moveVector, GameTime theGameTime)

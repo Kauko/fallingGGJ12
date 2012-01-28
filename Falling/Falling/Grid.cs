@@ -11,6 +11,7 @@ namespace Falling
     {
         int x, y, tileWidth, tileHeight;
         int rows, cols;
+        int spawnRow, spawnCol;
 
         Tile[,] tiles;
         Player currentPlayer;
@@ -46,38 +47,55 @@ namespace Falling
             rows = level.Rows;
             cols = level.Columns;
             tiles = new Tile[rows, cols];
+            int jewelcount = 0;
 
             for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < cols; c++)
                 {
                     int symbol = level.GetValue(r, c);
-                    int jewelcount = 0;
+                    
                     switch (symbol) {
                         case 0:
                             tiles[r, c] = new Tile(0);
+                            tiles[r, c].Position = new Vector2(r * tileHeight, c * tileWidth);
                             break;
                         case 1:
                             tiles[r, c] = new Tile(1);
+                            tiles[r, c].Position = new Vector2(r * tileHeight, c * tileWidth);
                             break;
                         case 2:
                             tiles[r, c] = new Tile(2);
+                            tiles[r, c].Position = new Vector2(r * tileHeight, c * tileWidth);
                             break;
                         case 3:
                             tiles[r, c] = new Tile(3);
+                            tiles[r, c].Position = new Vector2(r * tileHeight, c * tileWidth);
                             break;
                         case 4:
                             tiles[r, c] = new Tile(4);
+                            tiles[r, c].Position = new Vector2(r * tileHeight, c * tileWidth);
                             break;
                         case 5:
                             //Spawnpoint
                             spawn = new Vector2(r, c);
                             tiles[r, c] = new Tile(5);
+                            tiles[r, c].Position = new Vector2(r * tileHeight, c * tileWidth);
+                            spawnRow = r;
+                            spawnCol = c;
+                            spawn = new Vector2(r * tileHeight, c * tileWidth);
+                            camera.Position=getCameraCenter();
+                            currentPlayer.Position=spawn;
+                            currentPlayer.setPosition(r,c);
                             break;
                         case 6:
                             //Jewel
-                            items[jewelcount].Position = new Vector2(r, c);
+                            items[jewelcount].Position = new Vector2(r * tileHeight, c * tileWidth);
+                            items[jewelcount].setCol(c);
+                            items[jewelcount].setRow(r);
                             tiles[r, c] = new Tile(6);
+                            tiles[r, c].Position = new Vector2(r * tileHeight, c * tileWidth);
+                            jewelcount++;
                             break;
                         case 7:
                             break;
@@ -109,11 +127,22 @@ namespace Falling
             }
         }
 
-        public bool mouseClicked(int x, int y)
+        public Vector2 getSpawnPoint() 
+        {
+            return spawn;
+        }
+
+        public Vector2 getCameraCenter() 
+        {
+            Vector2 ret = spawn - new Vector2(640, 360);
+            return ret;
+        }
+
+        public bool mouseClicked(Vector2 pos)
         {
             //Kato mitä tileä hiirellä klikattiin
-            int row = (int)Math.Floor((float)(x / tileWidth));
-            int col = (int)Math.Floor((float)(y / tileHeight));
+            int row = (int)Math.Floor((float)(pos.X / tileHeight));
+            int col = (int)Math.Floor((float)(pos.Y / tileWidth));
 
             int tempCol, tempRow;
 
@@ -176,11 +205,13 @@ namespace Falling
                                     if (tempCol > 0)
                                         currentPlayer.setPosition(currentPlayer.getRow(),currentPlayer.getCol() + 3);
                                     if (tempCol < 0)
-                                        currentPlayer.setPosition(currentPlayer.getRow() - 3,currentPlayer.getCol());
+                                        currentPlayer.setPosition(currentPlayer.getRow(),currentPlayer.getCol() - 3);
+
+                                    stop = false;
                                 }
                             }
 
-                            stop = false;
+                            
 
                         }
                 }
@@ -190,7 +221,7 @@ namespace Falling
                 if (tiles[currentPlayer.getRow(), currentPlayer.getCol()].getLevel() <= 0) 
                 {
                     tiles[currentPlayer.getRow(), currentPlayer.getCol()].setBridge(true);
-                    currentPlayer.killPlayer();
+                    currentPlayer.becomeBridge();
                 }
 
                 return true;
@@ -268,14 +299,28 @@ namespace Falling
         {
             int pcol = currentPlayer.getCol();
             int prow = currentPlayer.getRow();
-            if (col == pcol && prow == row - 1 || prow == row + 1)
-                return true;
-            else if (row == prow && pcol == col - 1 || pcol == y + 1)
-                return true;
+            if (prow == row || pcol == col)
+            {
+                if (col == pcol && prow == row - 1 || prow == row + 1)
+                    return true;
+                else if (row == prow && pcol == col - 1 || pcol == col + 1)
+                    return true;
+                else
+                    return false;
+            }
             else
                 return false;
         }
 
+        public int getSpawnRow() 
+        {
+            return this.spawnRow;
+        }
 
+        public int getSpawnCol()
+        {
+            return this.spawnCol;
+        }
     }
+
 }

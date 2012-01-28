@@ -60,7 +60,7 @@ namespace Falling
 
         public Texture2D checkTexture() 
         {
-            if (level >= 0)
+            if (level <= 0 )
                 return TextureRefs.tileLevel0;
             else if (level > 0 && level < 7)
                 return TextureRefs.tileLevel1;

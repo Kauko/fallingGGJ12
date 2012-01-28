@@ -22,5 +22,14 @@ namespace Falling
         public const int startRow = 7;
         public const int playerTurns = 15;
 
+        public const int atlasLength = 6;
+        public const int stringAtlasLenght = 12;
+
+        public const int turnsX = 800;
+        public const int turnsY = 30;
+
+        //Kuinka suuri tila on yhdellä kirjaimella
+        public const int letterSize = 25;
+
     }
 }

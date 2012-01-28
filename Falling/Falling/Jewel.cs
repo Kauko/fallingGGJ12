@@ -10,7 +10,6 @@ namespace Falling
 {
     class Jewel : Item
     {
-        int row, col;
         bool collected = false;
         Texture2D texture;
         FrameImage frameImage;
@@ -23,12 +22,12 @@ namespace Falling
 
         public int getRow() 
         {
-            return row;
+            return this.row;
         }
 
         public int getCol() 
         {
-            return col;
+            return this.col;
         }
 
         public bool isCollected() 
@@ -36,20 +35,13 @@ namespace Falling
             return collected;
         }
 
-        public void setRow(int r) 
-        {
-            this.row = r;
-        }
 
-        public void setCol(int c) 
-        {
-            this.col = c;
-            frameImage.fadeOut();
-        }
 
         public void setCollected(bool c) 
         {
             this.collected = c;
+            if(c)
+                frameImage.fadeOut();
         }
     }
 }

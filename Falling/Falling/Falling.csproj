@@ -124,9 +124,11 @@
     <Compile Include="Program.cs" />
     <Compile Include="Game1.cs" />
     <Compile Include="Scene2DNode.cs" />
+    <Compile Include="StringClass.cs" />
     <Compile Include="TextureRefs.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TurnCounter.cs" />
+    <Compile Include="TurnString.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

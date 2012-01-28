@@ -22,11 +22,13 @@ namespace Falling
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
         FrameImageManager frameImageManager;
+        TurnString turnString;
 
         LevelLibrary.Level level;
 
         GameState state;
         MouseState oldMouse;
+        KeyboardState oldKeyboard;
         Grid grid;
         Camera2D camera;
         Vector2 cameraDirection = Vector2.Zero;
@@ -55,12 +57,12 @@ namespace Falling
         {
             // TODO: Add your initialization logic here
 
-            
+
+
+
+
 
             
-            
-            
-
             starting = true;
 
             this.IsMouseVisible = true;
@@ -74,6 +76,7 @@ namespace Falling
             grid = new Grid(C.xMarginLeft, C.yMargin, C.tileWidth, C.tileHeight, camera);
             grid.setCurrentPlayer(currentPlayer);
             grid.initJewels(frameImageManager);
+            turnString = new TurnString(TextureRefs.turnsTexture, 0, C.turnsX, C.turnsY);
         }
 
         /// <summary>
@@ -85,13 +88,15 @@ namespace Falling
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            level = Content.Load<LevelLibrary.Level>("level1");
+            level = Content.Load<LevelLibrary.Level>("level2");
 
             TextureRefs.tileLevel0 = this.Content.Load<Texture2D>("1");
             TextureRefs.tileLevel1 = this.Content.Load<Texture2D>("2");
             TextureRefs.tileLevel2 = this.Content.Load<Texture2D>("3");
             TextureRefs.tileLevel3 = this.Content.Load<Texture2D>("4");
             TextureRefs.tileLevel4 = this.Content.Load<Texture2D>("5");
+
+            TextureRefs.turnsTexture = this.Content.Load<Texture2D>("atlas_score");
 
             TextureRefs.jewel1 = this.Content.Load<Texture2D>("6");
             TextureRefs.jewel2 = this.Content.Load<Texture2D>("7");
@@ -149,6 +154,7 @@ namespace Falling
             if (starting)
             {
                 grid.LoadLevel(this.level);
+                starting = false;
             }
 
 
@@ -165,6 +171,7 @@ namespace Falling
                     break;
             }
             oldMouse = mouse;
+            oldKeyboard = keyboard;
             base.Update(gameTime);
         }
 
@@ -185,14 +192,14 @@ namespace Falling
                     break;
 
                 case GameState.playing:
-                    //spriteBatch.Draw(TextureRefs.background, new Vector2(0.0f, 0.0f), Color.White);
+                    spriteBatch.Draw(TextureRefs.background, new Vector2(0.0f, 0.0f), Color.White);
 
                     grid.Draw(spriteBatch);
-                    //spriteBatch.Draw(TextureRefs.frameBackground, new Vector2(0.0f, 0.0f), Color.White);
                     
 
-                    //spriteBatch.Draw(TextureRefs.frame, new Vector2(0.0f, 0.0f), Color.White);
-                    //frameImageManager.Draw(spriteBatch);
+                    spriteBatch.Draw(TextureRefs.frame, new Vector2(0.0f, 0.0f), Color.White);
+                    frameImageManager.Draw(spriteBatch);
+                    turnString.Draw(spriteBatch);
                     break;
 
                 case GameState.gameover:
@@ -205,6 +212,7 @@ namespace Falling
 
         protected void PlayingGame(GameTime gametime, MouseState mouse, KeyboardState keyboard)
         {
+            turnString.SetValue(currentPlayer.getTurnsLeft());
             cameraDirection = Vector2.Zero;
 
             if (keyboard.IsKeyDown(Keys.Left) == true)
@@ -230,35 +238,45 @@ namespace Falling
             if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
             {
                 //if is a valid tile
-                if (grid.mouseClicked(mouse.X, mouse.Y))
+                if (grid.mouseClicked(camera.TransformMouse(new Vector2( mouse.X, mouse.Y))))
                 {
-                    currentPlayer.decrementTurnsLeft();
-                    if (currentPlayer.getTurnsLeft() <= 0)
+                    if (currentPlayer.isBridge())
                     {
-                        grid.addDeadPlayer(currentPlayer);
                         currentPlayer = new Player();
+                        currentPlayer.Position = grid.getSpawnPoint();
+                        currentPlayer.setPosition(grid.getSpawnRow(), grid.getSpawnCol());
+                        camera.Position = grid.getCameraCenter();
                         grid.setCurrentPlayer(currentPlayer);
                         grid.decreaseTileLevels();
                     }
+                    else { 
+                        currentPlayer.decrementTurnsLeft();
+                        if (currentPlayer.getTurnsLeft() <= 0)
+                        {
+                            grid.addDeadPlayer(currentPlayer);
+                            currentPlayer = new Player();
+                            currentPlayer.Position = grid.getSpawnPoint();
+                            currentPlayer.setPosition(grid.getSpawnRow(), grid.getSpawnCol());
+                            camera.Position = grid.getCameraCenter();
+                            grid.setCurrentPlayer(currentPlayer);
+                            grid.decreaseTileLevels();
+                        }
+                    }
                 }
             }
-            else if (keyboard.IsKeyDown(Keys.Space))
+            else if (keyboard.IsKeyDown(Keys.Space) && oldKeyboard.IsKeyUp(Keys.Space))
             {
-                if (currentPlayer.getTurnsLeft() >= 5)
-                {
+                
                     grid.addDeadPlayer(currentPlayer);
+                    int passedTurns = currentPlayer.getTurnsLeft();
                     currentPlayer = new Player();
+                    currentPlayer.Position=grid.getSpawnPoint();
+                    currentPlayer.setPosition(grid.getSpawnRow(), grid.getSpawnCol());
+                    camera.Position = grid.getCameraCenter();
                     grid.setCurrentPlayer(currentPlayer);
                     grid.decreaseTileLevels();
-                    currentPlayer.addTurnsLeft(5);
-                }
-                else 
-                {
-                    grid.addDeadPlayer(currentPlayer);
-                    currentPlayer = new Player();
-                    grid.setCurrentPlayer(currentPlayer);
-                    grid.decreaseTileLevels();
-                }
+                    currentPlayer.addTurnsLeft(passedTurns);
+                
             }
         }
 

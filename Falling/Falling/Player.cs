@@ -12,6 +12,8 @@ namespace Falling
         int row, col;
         int turnsLeft;
 
+        bool bridge = false;
+
         private Vector2 worldPosition;
 
         public Vector2 Position
@@ -25,8 +27,6 @@ namespace Falling
 
         public Player() 
         {
-            this.row = C.startRow;
-            this.col = C.startCol;
             this.turnsLeft = C.playerTurns;
             thrower = false;
             partner = new List<Player>();
@@ -34,12 +34,15 @@ namespace Falling
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position) 
         {
-            spriteBatch.Draw(TextureRefs.jewel7, position, Color.White);  
+            spriteBatch.Draw(TextureRefs.player, position, Color.White);  
         }
 
         public void addTurnsLeft(int i) 
         {
-            this.turnsLeft = turnsLeft + i;
+            if (i > 5)
+                turnsLeft = turnsLeft + 5;
+            else
+                turnsLeft = turnsLeft + i;
         }
 
         public int getRow()
@@ -62,10 +65,11 @@ namespace Falling
             this.col = c;
         }
 
-        public void setPosition(int c, int r) 
+        public void setPosition(int r, int c) 
         {
             setCol(c);
             setRow(r);
+            worldPosition = new Vector2(r * C.tileHeight, c * C.tileWidth);
         }
 
         public void decrementTurnsLeft() 
@@ -102,6 +106,16 @@ namespace Falling
         public void killPlayer() 
         {
             this.turnsLeft = 0;
+        }
+
+        public bool isBridge() 
+        { 
+            return bridge;
+        }
+
+        public void becomeBridge() 
+        {
+            bridge = true;
         }
     }
 }

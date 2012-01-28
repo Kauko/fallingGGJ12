@@ -35,5 +35,7 @@ namespace Falling
 
         public static Texture2D background;
         public static Texture2D frame;
+
+        public static Texture2D turnsTexture;
     }
 }
