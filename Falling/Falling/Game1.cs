@@ -25,6 +25,7 @@ namespace Falling
         GameState state;
         MouseState oldMouse;
         Grid grid;
+        Camera2D camera;
 
         Player currentPlayer;
 
@@ -45,11 +46,14 @@ namespace Falling
             // TODO: Add your initialization logic here
 
             base.Initialize();
-            int gridSize = C.screenWidth - C.xMarginLeft - C.xMarginRight;
-            grid = new Grid(C.xMarginLeft, C.yMargin, gridSize / C.gridCols);
+
+            Camera2D camera = new Camera2D(spriteBatch);
+            grid = new Grid(C.xMarginLeft, C.yMargin, C.tileWidth, C.tileHeight, camera);
 
             this.IsMouseVisible = true;
-            state = GameState.title;
+            state = GameState.playing;
+            currentPlayer = new Player();
+            grid.setCurrentPlayer(currentPlayer);
         }
 
         /// <summary>
@@ -61,7 +65,13 @@ namespace Falling
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            // TODO: use this.Content to load your game content here
+            TextureRefs.tileLevel0 = this.Content.Load<Texture2D>("1");
+            TextureRefs.tileLevel1 = this.Content.Load<Texture2D>("2");
+            TextureRefs.tileLevel2 = this.Content.Load<Texture2D>("3");
+            TextureRefs.tileLevel3 = this.Content.Load<Texture2D>("4");
+            TextureRefs.tileLevel4 = this.Content.Load<Texture2D>("5");
+
+            TextureRefs.player = this.Content.Load<Texture2D>("hahmo");
         }
 
         /// <summary>
@@ -85,6 +95,7 @@ namespace Falling
                 this.Exit();
 
             MouseState mouse = Mouse.GetState();
+            KeyboardState keyboard = Keyboard.GetState();
 
 
             switch (state)
@@ -93,12 +104,13 @@ namespace Falling
                     break;
 
                 case GameState.playing:
-                    PlayingGame(gameTime, mouse);
+                    PlayingGame(gameTime, mouse, keyboard);
                     break;
 
                 case GameState.gameover:
                     break;
             }
+            oldMouse = mouse;
             base.Update(gameTime);
         }
 
@@ -115,11 +127,11 @@ namespace Falling
             switch (state)
             {
                 case GameState.title:
-                    spriteBatch.Draw(TextureRefs.title, new Vector2(0.0f, 0.0f), Color.White);
+                    //spriteBatch.Draw(null, new Vector2(0.0f, 0.0f), Color.White);
                     break;
 
                 case GameState.playing:
-                    spriteBatch.Draw(TextureRefs.background, new Vector2(0.0f, 0.0f), Color.White);
+                    //spriteBatch.Draw(TextureRefs.background, new Vector2(0.0f, 0.0f), Color.White);
 
                     grid.Draw(spriteBatch);
 
@@ -127,17 +139,18 @@ namespace Falling
                     break;
 
                 case GameState.gameover:
-                    spriteBatch.Draw(TextureRefs.highscore, new Vector2(0.0f, 0.0f), Color.White);
+                    //spriteBatch.Draw(null, new Vector2(0.0f, 0.0f), Color.White);
                     break;
             }
-
+            spriteBatch.End();
             base.Draw(gameTime);
         }
 
-        protected void PlayingGame(GameTime gametime, MouseState mouse)
+        protected void PlayingGame(GameTime gametime, MouseState mouse, KeyboardState keyboard)
         {
             if (mouse.LeftButton == ButtonState.Pressed && oldMouse.LeftButton == ButtonState.Released)
             {
+                //if is a valid tile
                 if (grid.mouseClicked(mouse.X, mouse.Y))
                 {
                     currentPlayer.decrementTurnsLeft();
@@ -145,7 +158,27 @@ namespace Falling
                     {
                         grid.addDeadPlayer(currentPlayer);
                         currentPlayer = new Player();
+                        grid.setCurrentPlayer(currentPlayer);
+                        grid.decreaseTileLevels();
                     }
+                }
+            }
+            else if (keyboard.IsKeyDown(Keys.Space))
+            {
+                if (currentPlayer.getTurnsLeft() >= 5)
+                {
+                    grid.addDeadPlayer(currentPlayer);
+                    currentPlayer = new Player();
+                    grid.setCurrentPlayer(currentPlayer);
+                    grid.decreaseTileLevels();
+                    currentPlayer.addTurnsLeft(5);
+                }
+                else 
+                {
+                    grid.addDeadPlayer(currentPlayer);
+                    currentPlayer = new Player();
+                    grid.setCurrentPlayer(currentPlayer);
+                    grid.decreaseTileLevels();
                 }
             }
         }

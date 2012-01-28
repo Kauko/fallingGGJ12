@@ -14,11 +14,11 @@ namespace Falling
         public const int xMarginRight = 5;
         public const int yMargin = 15;
 
-        public const int gridRows = 15;
-        public const int gridCols = 15;
+        public const int tileWidth = 64;
+        public const int tileHeight = 64;
 
-        public const int startX = 7;
-        public const int startY = 7;
+        public const int startCol = 7;
+        public const int startRow = 7;
         public const int playerTurns = 15;
     }
 }
