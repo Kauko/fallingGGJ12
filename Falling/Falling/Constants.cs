@@ -16,5 +16,9 @@ namespace Falling
 
         public const int gridRows = 15;
         public const int gridCols = 15;
+
+        public const int startX = 7;
+        public const int startY = 7;
+        public const int playerTurns = 15;
     }
 }

@@ -7,32 +7,50 @@ namespace Falling
 {
     class Player
     {
-        int x, y;
+        int row, col;
+        int turnsLeft;
 
-        public int getX()
+        public Player() 
         {
-            return x;
+            this.row = C.startRow;
+            this.col = C.startCol;
+            this.turnsLeft = C.playerTurns;
         }
 
-        public int getY()
+        public int getRow()
         {
-            return y;
+            return row;
         }
 
-        public void setX(int x)
+        public int getCol()
         {
-            this.x = x;
+            return col;
         }
 
-        public void setY(int y) 
+        public void setRow(int r)
         {
-            this.y = y;
+            this.row = r;
         }
 
-        public void setPosition(int x, int y) 
+        public void setCol(int c) 
         {
-            setY(y);
-            setX(x);
+            this.col = c;
+        }
+
+        public void setPosition(int r, int c) 
+        {
+            setCol(c);
+            setRow(r);
+        }
+
+        public void decrementTurnsLeft() 
+        {
+            turnsLeft--;
+        }
+
+        public int getTurnsLeft() 
+        {
+            return turnsLeft;
         }
     }
 }
