@@ -23,11 +23,15 @@ namespace Falling
         SpriteBatch spriteBatch;
         FrameImageManager frameImageManager;
 
+        LevelLibrary.Level level;
+
         GameState state;
         MouseState oldMouse;
         Grid grid;
         Camera2D camera;
         Vector2 cameraDirection = Vector2.Zero;
+        //tee paremmaksi jos on aikaa
+        bool starting;
 
         Player currentPlayer;
 
@@ -51,16 +55,25 @@ namespace Falling
         {
             // TODO: Add your initialization logic here
 
-            base.Initialize();
+            
 
-            camera = new Camera2D(spriteBatch);
-            grid = new Grid(C.xMarginLeft, C.yMargin, C.tileWidth, C.tileHeight, camera);
-            frameImageManager = new FrameImageManager();
+            
+            
+            
+
+            starting = true;
 
             this.IsMouseVisible = true;
             state = GameState.playing;
             currentPlayer = new Player();
+            
+            frameImageManager = new FrameImageManager();
+
+            base.Initialize();
+            camera = new Camera2D(spriteBatch);
+            grid = new Grid(C.xMarginLeft, C.yMargin, C.tileWidth, C.tileHeight, camera);
             grid.setCurrentPlayer(currentPlayer);
+            grid.initJewels(frameImageManager);
         }
 
         /// <summary>
@@ -72,7 +85,7 @@ namespace Falling
             // Create a new SpriteBatch, which can be used to draw textures.
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            LevelLibrary.Level level = Content.Load<LevelLibrary.Level>("level1");
+            level = Content.Load<LevelLibrary.Level>("level1");
 
             TextureRefs.tileLevel0 = this.Content.Load<Texture2D>("1");
             TextureRefs.tileLevel1 = this.Content.Load<Texture2D>("2");
@@ -80,7 +93,34 @@ namespace Falling
             TextureRefs.tileLevel3 = this.Content.Load<Texture2D>("4");
             TextureRefs.tileLevel4 = this.Content.Load<Texture2D>("5");
 
+            TextureRefs.jewel1 = this.Content.Load<Texture2D>("6");
+            TextureRefs.jewel2 = this.Content.Load<Texture2D>("7");
+            TextureRefs.jewel3 = this.Content.Load<Texture2D>("8");
+            TextureRefs.jewel4 = this.Content.Load<Texture2D>("9");
+            TextureRefs.jewel5 = this.Content.Load<Texture2D>("6");
+            TextureRefs.jewel6 = this.Content.Load<Texture2D>("7");
+            TextureRefs.jewel7 = this.Content.Load<Texture2D>("8");
+
             TextureRefs.player = this.Content.Load<Texture2D>("hahmo");
+
+            TextureRefs.background = this.Content.Load<Texture2D>("BG01");
+            TextureRefs.frame = this.Content.Load<Texture2D>("BG02");
+
+            TextureRefs.frameImage1 = this.Content.Load<Texture2D>("Otus01");
+            TextureRefs.frameImage11 = this.Content.Load<Texture2D>("Otus02");
+
+            
+            //Need 7 of these
+            frameImageManager.addFrameImage(TextureRefs.frameImage11, TextureRefs.frameImage1, new Vector2(15, 15));
+            frameImageManager.addFrameImage(TextureRefs.frameImage11, TextureRefs.frameImage1, new Vector2(30, 30));
+            frameImageManager.addFrameImage(TextureRefs.frameImage11, TextureRefs.frameImage1, new Vector2(1000, 1000));
+            frameImageManager.addFrameImage(TextureRefs.frameImage11, TextureRefs.frameImage1, new Vector2(700, 700));
+            frameImageManager.addFrameImage(TextureRefs.frameImage11, TextureRefs.frameImage1, new Vector2(200, 200));
+            frameImageManager.addFrameImage(TextureRefs.frameImage11, TextureRefs.frameImage1, new Vector2(350, 350));
+            frameImageManager.addFrameImage(TextureRefs.frameImage11, TextureRefs.frameImage1, new Vector2(100, 100));
+
+            
+            
         }
 
         /// <summary>
@@ -105,6 +145,11 @@ namespace Falling
 
             MouseState mouse = Mouse.GetState();
             KeyboardState keyboard = Keyboard.GetState();
+
+            if (starting)
+            {
+                grid.LoadLevel(this.level);
+            }
 
 
             switch (state)
@@ -144,9 +189,10 @@ namespace Falling
 
                     grid.Draw(spriteBatch);
                     //spriteBatch.Draw(TextureRefs.frameBackground, new Vector2(0.0f, 0.0f), Color.White);
-                    frameImageManager.Draw(spriteBatch);
+                    
 
-
+                    //spriteBatch.Draw(TextureRefs.frame, new Vector2(0.0f, 0.0f), Color.White);
+                    //frameImageManager.Draw(spriteBatch);
                     break;
 
                 case GameState.gameover:

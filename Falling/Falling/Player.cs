@@ -34,7 +34,7 @@ namespace Falling
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position) 
         {
-            spriteBatch.Draw(TextureRefs.player, position, Color.White);  
+            spriteBatch.Draw(TextureRefs.jewel7, position, Color.White);  
         }
 
         public void addTurnsLeft(int i) 

@@ -9,7 +9,7 @@ namespace Falling
 {
     class FrameImageManager
     {
-        List<FrameImage> frameImages;
+        List<FrameImage> frameImages = new List<FrameImage>();
 
         public void addFrameImage(Texture2D clean,Texture2D fade, Vector2 pos) 
         { 
@@ -22,6 +22,11 @@ namespace Falling
             {
                 i.Draw(spriteBatch);
             }
+        }
+
+        public FrameImage getFrameImage(int i) 
+        {
+            return frameImages[i];
         }
     }
 }

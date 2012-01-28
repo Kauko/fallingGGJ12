@@ -13,7 +13,7 @@ namespace Falling
 {
     class Tile
     {
-        int level = 25;
+        int level;
         bool bridge = false;
 
         private Vector2 worldPosition;
@@ -22,6 +22,13 @@ namespace Falling
         {
             get { return worldPosition; }
             set { worldPosition = value; }
+        }
+
+        public Tile(int strength) 
+        {
+            if (strength > 4)
+                setBridge(true);
+            level = strength * 5;
         }
 
         public int getLevel() 
@@ -42,7 +49,8 @@ namespace Falling
 
         public void decreaseLevel() 
         {
-            level--;
+            if(!isBridge())
+                level--;
         }
 
         public void Draw(SpriteBatch spriteBatch, Vector2 position) 
@@ -61,7 +69,7 @@ namespace Falling
             else if (level > 12 && level < 20)
                 return TextureRefs.tileLevel3;
             else if (isBridge())
-                return TextureRefs.player;
+                return TextureRefs.jewel7;
             else
                 return TextureRefs.tileLevel4;
         }

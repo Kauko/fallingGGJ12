@@ -17,6 +17,7 @@ namespace Falling
         List<Player> deadPlayers = new List<Player>();
         List<Item> items = new List<Item>();
         Camera2D camera;
+        Vector2 spawn;
 
         public Grid(int gridX, int gridY, int w, int h, Camera2D c)
         {
@@ -25,6 +26,74 @@ namespace Falling
             tileWidth = w;
             tileHeight = h;
             this.camera = c;
+
+            
+        }
+
+        public void initJewels(FrameImageManager frameImageManager) 
+        {
+            items.Add(new Jewel(TextureRefs.jewel1, frameImageManager.getFrameImage(0)));
+            items.Add(new Jewel(TextureRefs.jewel2, frameImageManager.getFrameImage(1)));
+            items.Add(new Jewel(TextureRefs.jewel3, frameImageManager.getFrameImage(2)));
+            items.Add(new Jewel(TextureRefs.jewel4, frameImageManager.getFrameImage(3)));
+            items.Add(new Jewel(TextureRefs.jewel5, frameImageManager.getFrameImage(4)));
+            items.Add(new Jewel(TextureRefs.jewel6, frameImageManager.getFrameImage(5)));
+            items.Add(new Jewel(TextureRefs.jewel7, frameImageManager.getFrameImage(6)));
+        }
+
+        public void LoadLevel(LevelLibrary.Level level) 
+        {
+            rows = level.Rows;
+            cols = level.Columns;
+            tiles = new Tile[rows, cols];
+
+            for (int r = 0; r < rows; r++)
+            {
+                for (int c = 0; c < cols; c++)
+                {
+                    int symbol = level.GetValue(r, c);
+                    int jewelcount = 0;
+                    switch (symbol) {
+                        case 0:
+                            tiles[r, c] = new Tile(0);
+                            break;
+                        case 1:
+                            tiles[r, c] = new Tile(1);
+                            break;
+                        case 2:
+                            tiles[r, c] = new Tile(2);
+                            break;
+                        case 3:
+                            tiles[r, c] = new Tile(3);
+                            break;
+                        case 4:
+                            tiles[r, c] = new Tile(4);
+                            break;
+                        case 5:
+                            //Spawnpoint
+                            spawn = new Vector2(r, c);
+                            tiles[r, c] = new Tile(5);
+                            break;
+                        case 6:
+                            //Jewel
+                            items[jewelcount].Position = new Vector2(r, c);
+                            tiles[r, c] = new Tile(6);
+                            break;
+                        case 7:
+                            break;
+                        case 8:
+                            break;
+                        case 9:
+                            break;
+                    
+                    }
+                    /*char cType = symbol[0];
+                    if (cType != '-')
+                    {
+                        LoadCritter(cType, Convert.ToInt32(symbol[1].ToString()), r, c);
+                    }*/
+                }
+            }
         }
 
         public void decreaseTileLevels() 
