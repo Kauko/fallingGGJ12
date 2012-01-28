@@ -15,6 +15,7 @@ namespace Falling
         Tile[,] tiles;
         Player currentPlayer;
         List<Player> deadPlayers = new List<Player>();
+        List<Item> items = new List<Item>();
         Camera2D camera;
 
         public Grid(int gridX, int gridY, int w, int h, Camera2D c)
@@ -52,6 +53,15 @@ namespace Falling
                 int previousCol = currentPlayer.getCol();
                 int previousRow = currentPlayer.getRow();
                 currentPlayer.setPosition(row, col);
+
+                foreach (Jewel j in items) 
+                {
+                    if (currentPlayer.getRow() == j.getRow() && currentPlayer.getCol() == j.getCol()) 
+                    {
+                        j.setCollected(true);
+                        currentPlayer.killPlayer();
+                    }
+                }
                 
                 /* Vuoro loppuu niin pitää tarkastaa vaikuttavatko vanhat pelaajat aktiiviseen pelaajaan. Oletuksena while (deadPLayers lista) käydään kerran läpi
                  * Jos löytyy jotain vaikutusta niin stop = false, jolloin while käydään uudestaan läpi
