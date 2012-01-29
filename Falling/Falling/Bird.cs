@@ -2,37 +2,31 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 
 namespace Falling
 {
-    class Jewel : Item
+    class Bird : Item
     {
         bool collected = false;
-        FrameImage frameImage;
 
-        public Jewel(Texture2D text, FrameImage img) 
+        public Bird(Texture2D text,Vector2 position, int col, int row) 
         {
+            Position = position;
+            setCol(col);
+            setRow(row);
             this.texture = text;
-            this.frameImage = img;
         }
-
-
 
         public bool isCollected() 
         {
-            return collected;
+            return this.collected;
         }
-
-
 
         public void setCollected(bool c) 
         {
             this.collected = c;
-            if(c)
-                frameImage.fadeOut();
         }
     }
 }

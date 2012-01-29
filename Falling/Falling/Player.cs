@@ -11,8 +11,10 @@ namespace Falling
     {
         int row, col;
         int turnsLeft;
+        int flyTurns;
 
         bool bridge = false;
+        bool flying = false;
 
         private Vector2 worldPosition;
 
@@ -74,12 +76,24 @@ namespace Falling
 
         public void decrementTurnsLeft() 
         {
-            turnsLeft--;
+            if (!isFlying())
+                turnsLeft--;
+            else {
+                flyTurns--;
+                if (flyTurns <= 0)
+                    flying = false;
+            }
+                
         }
 
         public int getTurnsLeft() 
         {
             return turnsLeft;
+        }
+
+        public int getFlyTurnsLeft() 
+        {
+            return flyTurns;
         }
 
         public bool isThrower() 
@@ -116,6 +130,27 @@ namespace Falling
         public void becomeBridge() 
         {
             bridge = true;
+        }
+
+        public bool isFlying() 
+        {
+            return flying;
+        }
+
+        public void setFlying(bool f) 
+        {
+            if (f)
+            {
+                flying = true;
+                flyTurns = 10;
+
+            }
+            else 
+            {
+                flying = false;
+                flyTurns = 0;
+            }
+               
         }
     }
 }

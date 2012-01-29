@@ -27,6 +27,7 @@ namespace Falling
             this.clearTexture = c;
             this.fadeTexture = f;
             this.activeTexture = this.clearTexture;
+            Position = p;
         }
 
         public void Draw(SpriteBatch spriteBatch) 
@@ -37,6 +38,11 @@ namespace Falling
         public void fadeOut() 
         {
             this.activeTexture = this.fadeTexture;
+        }
+
+        public void resetTexture() 
+        {
+            this.activeTexture = this.clearTexture;
         }
     }
 }

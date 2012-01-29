@@ -26,8 +26,8 @@ namespace Falling
 
         public Tile(int strength) 
         {
-            if (strength > 4)
-                setBridge(true);
+            //if (strength > 4)
+                //setBridge(true);
             level = strength * 5;
         }
 
@@ -60,18 +60,20 @@ namespace Falling
 
         public Texture2D checkTexture() 
         {
-            if (level <= 0 )
+            if (level <= 0)
                 return TextureRefs.tileLevel0;
-            else if (level > 0 && level < 7)
+            else if (level > 0 && level < 6) //1,2,3,4,5
                 return TextureRefs.tileLevel1;
-            else if (level > 6 && level < 13)
+            else if (level > 5 && level < 11) //6,7,8,9,10
                 return TextureRefs.tileLevel2;
-            else if (level > 12 && level < 20)
+            else if (level > 10 && level < 16) //11,12,13,14,15
                 return TextureRefs.tileLevel3;
+            else if (level > 20 && level < 99)
+                return TextureRefs.tileLevel5;
             else if (isBridge())
-                return TextureRefs.jewel7;
+                return TextureRefs.playerBridge;
             else
-                return TextureRefs.tileLevel4;
+                return TextureRefs.tileLevel4; //16,17,18,19,20
         }
     }
 }

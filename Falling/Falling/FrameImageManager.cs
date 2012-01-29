@@ -28,5 +28,13 @@ namespace Falling
         {
             return frameImages[i];
         }
+
+        public void resetFrameImages() 
+        {
+            foreach (FrameImage i in frameImages)
+            {
+                i.resetTexture();
+            }
+        }
     }
 }

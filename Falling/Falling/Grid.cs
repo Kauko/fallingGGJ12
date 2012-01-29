@@ -13,10 +13,15 @@ namespace Falling
         int rows, cols;
         int spawnRow, spawnCol;
 
+        bool win;
+        int collectedCount;
+
         Tile[,] tiles;
         Player currentPlayer;
         List<Player> deadPlayers = new List<Player>();
-        List<Item> items = new List<Item>();
+        List<Jewel> jewels = new List<Jewel>();
+        List<Bird> birds = new List<Bird>();
+
         Camera2D camera;
         Vector2 spawn;
 
@@ -33,17 +38,28 @@ namespace Falling
 
         public void initJewels(FrameImageManager frameImageManager) 
         {
-            items.Add(new Jewel(TextureRefs.jewel1, frameImageManager.getFrameImage(0)));
-            items.Add(new Jewel(TextureRefs.jewel2, frameImageManager.getFrameImage(1)));
-            items.Add(new Jewel(TextureRefs.jewel3, frameImageManager.getFrameImage(2)));
-            items.Add(new Jewel(TextureRefs.jewel4, frameImageManager.getFrameImage(3)));
-            items.Add(new Jewel(TextureRefs.jewel5, frameImageManager.getFrameImage(4)));
-            items.Add(new Jewel(TextureRefs.jewel6, frameImageManager.getFrameImage(5)));
-            items.Add(new Jewel(TextureRefs.jewel7, frameImageManager.getFrameImage(6)));
+            jewels.Add(new Jewel(TextureRefs.jewel1, frameImageManager.getFrameImage(0)));
+            jewels.Add(new Jewel(TextureRefs.jewel2, frameImageManager.getFrameImage(4)));
+            jewels.Add(new Jewel(TextureRefs.jewel3, frameImageManager.getFrameImage(6)));
+            jewels.Add(new Jewel(TextureRefs.jewel4, frameImageManager.getFrameImage(1)));
+            jewels.Add(new Jewel(TextureRefs.jewel5, frameImageManager.getFrameImage(2)));
+            jewels.Add(new Jewel(TextureRefs.jewel6, frameImageManager.getFrameImage(3)));
+            jewels.Add(new Jewel(TextureRefs.jewel7, frameImageManager.getFrameImage(5)));
+        }
+
+        public void unloadLevel() 
+        {
+            win = false;
+            deadPlayers.Clear();
+            jewels.Clear();
+            collectedCount = 0;
+            
+
         }
 
         public void LoadLevel(LevelLibrary.Level level) 
         {
+            collectedCount = 0;
             rows = level.Rows;
             cols = level.Columns;
             tiles = new Tile[rows, cols];
@@ -79,7 +95,7 @@ namespace Falling
                         case 5:
                             //Spawnpoint
                             spawn = new Vector2(r, c);
-                            tiles[r, c] = new Tile(5);
+                            tiles[r, c] = new Tile(7);
                             tiles[r, c].Position = new Vector2(r * tileHeight, c * tileWidth);
                             spawnRow = r;
                             spawnCol = c;
@@ -90,14 +106,18 @@ namespace Falling
                             break;
                         case 6:
                             //Jewel
-                            items[jewelcount].Position = new Vector2(r * tileHeight, c * tileWidth);
-                            items[jewelcount].setCol(c);
-                            items[jewelcount].setRow(r);
-                            tiles[r, c] = new Tile(6);
+                            jewels[jewelcount].Position = new Vector2(r * tileHeight, c * tileWidth);
+                            jewels[jewelcount].setCol(c);
+                            jewels[jewelcount].setRow(r);
+                            tiles[r, c] = new Tile(7);
                             tiles[r, c].Position = new Vector2(r * tileHeight, c * tileWidth);
                             jewelcount++;
                             break;
                         case 7:
+                            //Bird
+                            birds.Add(new Bird(TextureRefs.bird,new Vector2(r * tileHeight, c * tileWidth),c,r));
+                            tiles[r, c] = new Tile(7);
+                            tiles[r, c].Position = new Vector2(r * tileHeight, c * tileWidth);
                             break;
                         case 8:
                             break;
@@ -116,6 +136,8 @@ namespace Falling
 
         public void decreaseTileLevels() 
         {
+            List<int> removablePlayers = new List<int>();
+
             for (int r = 0; r < rows; r++)
             {
                 for (int c = 0; c < cols; c++)
@@ -123,8 +145,33 @@ namespace Falling
                     Tile t = tiles[r, c];
                     if(!t.isBridge() && t.getLevel() > 0 )
                         t.decreaseLevel();
+
+                    if (t.getLevel() == 0) 
+                    {
+                        foreach (Player p in deadPlayers) 
+                        {
+                            if (p.getCol() == c && p.getRow() == r) 
+                            {
+                                t.setBridge(true);
+                                p.becomeBridge();
+                                removablePlayers.Add(deadPlayers.IndexOf(p));
+                            }
+
+                        }
+
+                        
+
+
+                    }
                 }
             }
+
+            foreach (int i in removablePlayers)
+            {
+                deadPlayers.RemoveAt(i);
+            }
+
+
         }
 
         public Vector2 getSpawnPoint() 
@@ -144,6 +191,8 @@ namespace Falling
             int row = (int)Math.Floor((float)(pos.X / tileHeight));
             int col = (int)Math.Floor((float)(pos.Y / tileWidth));
 
+            
+
             int tempCol, tempRow;
 
             if (tileAdjacentToPlayer(row, col))
@@ -151,15 +200,10 @@ namespace Falling
                 int previousCol = currentPlayer.getCol();
                 int previousRow = currentPlayer.getRow();
                 currentPlayer.setPosition(row, col);
+                win = true;
+                
 
-                foreach (Jewel j in items) 
-                {
-                    if (currentPlayer.getRow() == j.getRow() && currentPlayer.getCol() == j.getCol()) 
-                    {
-                        j.setCollected(true);
-                        currentPlayer.killPlayer();
-                    }
-                }
+                
                 
                 /* Vuoro loppuu niin pitää tarkastaa vaikuttavatko vanhat pelaajat aktiiviseen pelaajaan. Oletuksena while (deadPLayers lista) käydään kerran läpi
                  * Jos löytyy jotain vaikutusta niin stop = false, jolloin while käydään uudestaan läpi
@@ -168,6 +212,26 @@ namespace Falling
                 while (true)
                 {
                     bool stop = true;
+
+                    foreach (Jewel j in jewels)
+                    {
+                        if (currentPlayer.getRow() == j.getRow() && currentPlayer.getCol() == j.getCol())
+                        {
+                            j.setCollected(true);
+                            collectedCount++;
+                            currentPlayer.killPlayer();
+                        }
+                    }
+
+                    foreach (Bird b in birds) 
+                    {
+                        if (currentPlayer.getRow() == b.getRow() && currentPlayer.getCol() == b.getCol() && !b.isCollected())
+                        {
+                            b.setCollected(true);
+                            currentPlayer.setFlying(true);
+                        }
+                    }
+
                     foreach (Player p in deadPlayers)
                     {
                         if (p.getRow() == currentPlayer.getRow() && p.getCol() == currentPlayer.getCol())
@@ -179,7 +243,14 @@ namespace Falling
                             previousCol = currentPlayer.getCol();
                             previousRow = currentPlayer.getRow();
 
-                            currentPlayer.setPosition(currentPlayer.getRow() + tempRow,currentPlayer.getCol() + tempCol);
+                            if (tempRow > 0)
+                                currentPlayer.setPosition(currentPlayer.getRow() + 1, currentPlayer.getCol());
+                            if (tempRow < 0)
+                                currentPlayer.setPosition(currentPlayer.getRow() - 1, currentPlayer.getCol());
+                            if (tempCol > 0)
+                                currentPlayer.setPosition(currentPlayer.getRow(), currentPlayer.getCol() + 1);
+                            if (tempCol < 0)
+                                currentPlayer.setPosition(currentPlayer.getRow(), currentPlayer.getCol() - 1);
                             stop = false;
 
                         }
@@ -218,11 +289,21 @@ namespace Falling
                     if (stop)
                         break;
                 }
-                if (tiles[currentPlayer.getRow(), currentPlayer.getCol()].getLevel() <= 0) 
+                //jos on vielä keräämättämiä jeweleitä niin ei voida voittaa
+                foreach (Jewel j in jewels)
+                {
+                    if (!j.isCollected())
+                        win = false;
+                }
+
+                if (tiles[currentPlayer.getRow(), currentPlayer.getCol()].getLevel() <= 0 && !currentPlayer.isFlying())
                 {
                     tiles[currentPlayer.getRow(), currentPlayer.getCol()].setBridge(true);
                     currentPlayer.becomeBridge();
                 }
+                else if (tiles[currentPlayer.getRow(), currentPlayer.getCol()].getLevel() > 0 && currentPlayer.isFlying())
+                    if(currentPlayer.getFlyTurnsLeft() < 10)
+                        currentPlayer.setFlying(false);
 
                 return true;
             }
@@ -286,12 +367,26 @@ namespace Falling
                 }
             }
 
+            foreach (Jewel j in jewels) 
+            {
+                if(!j.isCollected())
+                    camera.DrawItem(j);
+            }
+
+            foreach (Bird b in birds) 
+            {
+                if(!b.isCollected())
+                    camera.DrawItem(b);
+            }
+
             foreach (Player d in deadPlayers) 
             {
                 camera.DrawPlayer(d);
             }
 
             camera.DrawPlayer(currentPlayer);
+            
+            spriteBatch.Draw(TextureRefs.selector, camera.ApplyTransformations(tiles[currentPlayer.getRow() - 1, currentPlayer.getCol() - 1].Position), Color.White);
             
         }
 
@@ -320,6 +415,34 @@ namespace Falling
         public int getSpawnCol()
         {
             return this.spawnCol;
+        }
+
+        public bool isWin() 
+        {
+            return win;
+        }
+
+        public bool isCloseWin() 
+        {
+            if (win == false)
+            {
+                if (collectedCount > 4)
+                    return true;
+                else
+                    return false;
+            }
+            else
+                return false;
+        }
+
+        public int getLevelRows() 
+        {
+            return this.rows;
+        }
+
+        public int getLevelCols()
+        {
+            return this.cols;
         }
     }
 
